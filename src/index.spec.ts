@@ -6,9 +6,4 @@ describe('foo', () => {
     foo.foo(false);
     assert(true);
   });
-
-  it('foo true', () => {
-    foo.foo(true);
-    assert(true);
-  });
 });
