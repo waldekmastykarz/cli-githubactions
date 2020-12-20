@@ -159,3 +159,10 @@ jobs:
           tags: m365pnp/cli-microsoft365:${{ steps.package_version.outputs.version }}
           build-args: |
             CLI_VERSION=${{ steps.package_version.outputs.version }}
+      - name: Build and push next
+        uses: docker/build-push-action@v2
+        with:
+          push: false
+          tags: m365pnp/cli-microsoft365:next
+          build-args: |
+            CLI_VERSION=${{ steps.package_version.outputs.version }}
