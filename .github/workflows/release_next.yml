@@ -9,8 +9,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
-        node: [10, 12, 14]
+        # os: [macos-latest, windows-latest, ubuntu-latest]
+        # node: [10, 12, 14]
+        os: [ubuntu-latest]
+        node: [14]
 
     steps:
       - uses: actions/checkout@v2
@@ -43,8 +45,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
-        node: [10, 12, 14]
+        # os: [macos-latest, windows-latest, ubuntu-latest]
+        # node: [10, 12, 14]
+        os: [ubuntu-latest]
+        node: [14]
 
     steps:
       - uses: actions/download-artifact@v2
@@ -101,6 +105,13 @@ jobs:
         run: echo "npm publish --tag next --access public"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-ubuntu-latest-14
+          path: |
+            .
+            !node_modules
   deploy_docs:
     needs: publish_next
     runs-on: ubuntu-latest
@@ -137,14 +148,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Extract version from package
+        id: package_version
         run: |
-          echo "export PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $BASH_ENV
-          source $BASH_ENV
-      - name: Build and push ${{ env.PACKAGE_VERSION }}
-        id: docker_build
+          echo "::set-output name=version::$(node -p "require('./package.json').version")"
+      - name: Build and push ${{ steps.package_version.outputs.version }}
         uses: docker/build-push-action@v2
         with:
           push: false
-          tags: m365pnp/cli-microsoft365:${{ env.PACKAGE_VERSION }}
+          tags: m365pnp/cli-microsoft365:${{ steps.package_version.outputs.version }}
           build-args: |
-            CLI_VERSION=${{ env.PACKAGE_VERSION }}
+            CLI_VERSION=${{ steps.package_version.outputs.version }}
