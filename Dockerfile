@@ -19,11 +19,9 @@ RUN apk add --no-cache \
   sudo \
   bash \
   shadow \
-  bash-completion
-
-RUN apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main \
-  nodejs=14.15.1-r0 \
-  npm=14.15.1-r0
+  bash-completion \
+  nodejs=12.18.4-r0 \
+  npm=12.18.4-r0
 
 RUN adduser --system cli-microsoft365
 USER cli-microsoft365
