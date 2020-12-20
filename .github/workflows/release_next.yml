@@ -39,6 +39,7 @@ jobs:
           name: build-${{ matrix.os }}-${{ matrix.node }}
           path: |
             .
+            !.git
             !node_modules
   test:
     needs: build
@@ -100,7 +101,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
       - name: Stamp beta to package version
-        run: node scripts/update-package-version.js $(git rev-parse --short "$GITHUB_SHA")
+        run: node scripts/update-package-version.js $GITHUB_SHA
       - name: Publish @next
         run: echo "npm publish --tag next --access public"
         env:
