@@ -114,3 +114,37 @@ jobs:
       - run: pip install pymdown-extensions==6.0
       - run: mkdocs gh-deploy --force -m "[ci skip]"
         working-directory: docs
+  deploy_docker:
+    needs: publish_next
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: build-ubuntu-latest-14
+      - name: Use Node.js 14
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14
+          registry-url: 'https://registry.npmjs.org'
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Extract version from package
+        run: |
+          echo "export PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $BASH_ENV
+          source $BASH_ENV
+      - name: Build and push ${{ env.PACKAGE_VERSION }}
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: false
+          tags: m365pnp/cli-microsoft365:${{ env.PACKAGE_VERSION }}
+          build-args: |
+            CLI_VERSION=${{ env.PACKAGE_VERSION }}
