@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
-        node: [10, 12, 14]
+        node: [14]
 
     steps:
       - uses: actions/checkout@v2
@@ -42,12 +42,22 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
-        node: [10, 12, 14]
+        node: [14]
+        include:
+          - node: 10
+            os: macos-latest
+          - node: 12
+            os: macos-latest
 
     steps:
       - uses: actions/download-artifact@v2
+        if: ${{ matrix.node == 14 }}
         with:
           name: build-${{ matrix.os }}-${{ matrix.node }}
+      - uses: actions/download-artifact@v2
+        if: ${{ matrix.node != 14 }}
+        with:
+          name: build-${{ matrix.os }}-14
       - name: Use Node.js ${{ matrix.node }}
         uses: actions/setup-node@v1
         with:
@@ -64,7 +74,11 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
       - name: Test
+        if: ${{ matrix.node == 14 }}
         run: npm test
+      - name: Test
+        if: ${{ matrix.node != 14 }}
+        run: npm run test:nocov
       - uses: actions/upload-artifact@v2
         if: ${{ always() }}
         with:
