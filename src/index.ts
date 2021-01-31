@@ -3,9 +3,9 @@ function foo1() {
 }
 
 export function foo(p: boolean) {
-//   if (p) {
+  if (p) {
     foo1();
-//   }
+  }
 
   console.log('Hello world');
 }
