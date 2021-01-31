@@ -42,55 +42,48 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
-        node: [14]
+        # node versions to run tests on
+        nodeRun: [14]
+        # node versions on which code was built and should be tested
+        nodeBuild: [14]
         include:
           - os: macos-latest
-            node: 10
+            nodeRun: 10
+            nodeBuild: 14
           - os: macos-latest
-            node: 12
+            nodeRun: 12
+            nodeBuild: 14
 
     steps:
       - uses: actions/download-artifact@v2
-        if: matrix.node == 14
         with:
-          name: build-${{ matrix.os }}-${{ matrix.node }}
-      - uses: actions/download-artifact@v2
-        if: matrix.node != 14
-        with:
-          name: build-${{ matrix.os }}-14
-      - name: Use Node.js ${{ matrix.node }}
+          name: build-${{ matrix.os }}-${{ matrix.nodeBuild }}
+      - name: Use Node.js ${{ matrix.nodeRun }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node }}
+          node-version: ${{ matrix.nodeRun }}
           registry-url: 'https://registry.npmjs.org'
       - name: Cache node modules
-        if: matrix.node == 14
         id: cache
         uses: actions/cache@v2
         with:
           path: |
             **/node_modules
-          key: node_modules-${{ matrix.os }}-${{ matrix.node }}-${{ hashFiles('**/npm-shrinkwrap.json') }}
-      - name: Cache node modules
-        if: matrix.node != 14
-        id: cache14
-        uses: actions/cache@v2
-        with:
-          path: |
-            **/node_modules
-          key: node_modules-${{ matrix.os }}-14-${{ hashFiles('**/npm-shrinkwrap.json') }}
+          key: node_modules-${{ matrix.os }}-${{ matrix.nodeBuild }}-${{ hashFiles('**/npm-shrinkwrap.json') }}
       - name: Restore dependencies
-        if: steps.cache.outputs.cache-hit != 'true' || steps.cache14.outputs.cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
       - name: Test with coverage
-        if: matrix.node == 14
+        # we run coverage only on Node@14 because older version report it incorrectly
+        if: matrix.nodeRun == 14
         run: npm test
       - name: Test without coverage
-        if: matrix.node != 14
+        # we want to run tests on older Node versions to ensure that code works
+        if: matrix.nodeRun != 14
         run: npm run test:nocov
       - uses: actions/upload-artifact@v2
-        if: matrix.node == 14 && always()
+        if: matrix.nodeRun == 14 && always()
         with:
-          name: coverage-${{ matrix.os }}-${{ matrix.node }}
+          name: coverage-${{ matrix.os }}-${{ matrix.nodeRun }}
           path: coverage
   
