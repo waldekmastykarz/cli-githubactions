@@ -51,11 +51,11 @@ jobs:
 
     steps:
       - uses: actions/download-artifact@v2
-        if: ${{ matrix.node == 14 }}
+        if: matrix.node == 14
         with:
           name: build-${{ matrix.os }}-${{ matrix.node }}
       - uses: actions/download-artifact@v2
-        if: ${{ matrix.node != 14 }}
+        if: matrix.node != 14
         with:
           name: build-${{ matrix.os }}-14
       - name: Use Node.js ${{ matrix.node }}
@@ -64,7 +64,7 @@ jobs:
           node-version: ${{ matrix.node }}
           registry-url: 'https://registry.npmjs.org'
       - name: Cache node modules
-        if: ${{ matrix.node == 14 }}
+        if: matrix.node == 14
         id: cache
         uses: actions/cache@v2
         with:
@@ -72,24 +72,24 @@ jobs:
             **/node_modules
           key: node_modules-${{ matrix.os }}-${{ matrix.node }}-${{ hashFiles('**/npm-shrinkwrap.json') }}
       - name: Cache node modules
-        if: ${{ matrix.node != 14 }}
-        id: cache
+        if: matrix.node != 14
+        id: cache14
         uses: actions/cache@v2
         with:
           path: |
             **/node_modules
           key: node_modules-${{ matrix.os }}-14-${{ hashFiles('**/npm-shrinkwrap.json') }}
       - name: Restore dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true' || steps.cache14.outputs.cache-hit != 'true'
         run: npm ci
       - name: Test with coverage
-        if: ${{ matrix.node == 14 }}
+        if: matrix.node == 14
         run: npm test
       - name: Test without coverage
-        if: ${{ matrix.node != 14 }}
+        if: matrix.node != 14
         run: npm run test:nocov
       - uses: actions/upload-artifact@v2
-        if: ${{ matrix.node == 14 && always() }}
+        if: matrix.node == 14 && always()
         with:
           name: coverage-${{ matrix.os }}-${{ matrix.node }}
           path: coverage
