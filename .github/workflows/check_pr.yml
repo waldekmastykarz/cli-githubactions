@@ -47,10 +47,10 @@ jobs:
         # node versions on which code was built and should be tested
         nodeBuild: [14]
         include:
-          - os: macos-latest
+          - os: ubuntu-latest
             nodeRun: 10
             nodeBuild: 14
-          - os: macos-latest
+          - os: ubuntu-latest
             nodeRun: 12
             nodeBuild: 14
 
