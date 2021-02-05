@@ -1,27 +1,28 @@
 {
-  "name": "cli-githubactions",
-  "version": "3.4.0",
+  "name": "@pnp/cli-microsoft365",
+  "version": "3.6.0",
   "description": "Manage Microsoft 365 and SharePoint Framework projects on any platform",
   "license": "MIT",
   "main": "./dist/index.js",
   "bin": {
     "microsoft365": "./dist/index.js",
-    "m365": "./dist/index.js"
+    "m365": "./dist/index.js",
+    "m365_comp": "./dist/autocomplete.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/waldekmastykarz/cli-githubactions.git"
+    "url": "git+https://github.com/pnp/cli-microsoft365.git"
   },
   "homepage": "https://pnp.github.io/cli-microsoft365/",
   "bugs": {
-    "url": "https://github.com/waldekmastykarz/cli-githubactions/issues"
+    "url": "https://github.com/pnp/cli-microsoft365/issues"
   },
   "scripts": {
-    "build": "tsc -p .",
+    "build": "tsc -p . && node scripts/copy-files.js",
     "watch": "tsc -w -p .",
     "clean": "rimraf ./dist",
-    "test": "c8 mocha \"dist/**/*.spec.js\"",
-    "test:nocov": "mocha \"dist/**/*.spec.js\""
+    "test": "c8 mocha \"dist/**/*.spec.js\" --timeout 10000",
+    "test:nocov": "mocha \"dist/**/*.spec.js\" --timeout 10000"
   },
   "keywords": [
     "office 365",
@@ -40,7 +41,7 @@
     "azure",
     "microsoft"
   ],
-  "author": "https://github.com/waldekmastykarz/cli-githubactions/graphs/contributors",
+  "author": "https://github.com/pnp/cli-microsoft365/graphs/contributors",
   "maintainers": [
     {
       "name": "Waldek Mastykarz",
@@ -68,14 +69,14 @@
       "web": "https://rabiawilliams.com/"
     },
     {
-      "name": "Mark Powney",
-      "email": "mpowney@icloud.com",
-      "web": "https://blog.powney.info/"
-    },
-    {
       "name": "Patrick Lamber",
       "email": "patrick@nubo.eu",
       "web": "https://www.nubo.eu/"
+    },
+    {
+      "name": "Arjun Menon",
+      "email": "arjun.umenon@gmail.com",
+      "web": "https://arjunumenon.com/"
     }
   ],
   "contributors": [
@@ -92,6 +93,7 @@
     "Calabro, David <davej.calabro@gmail.com>",
     "Connell, Andrew <me@andrewconnell.com>",
     "Deshpande, Vardhaman <vardhaman.rd@gmail.com>",
+    "Ford, Lee <fordyman@gmail.com>",
     "Georgiev, Velin <velin.georgiev@gmail.com>",
     "Ghuge, Pramod <pramod7@gmail.com>",
     "Gölles, Thomas <thomy@outlook.at>",
@@ -124,6 +126,7 @@
     "Ramalho, David <dramalho@storm.ie>",
     "Reekmans, Yannick <reekmans.yannick@gmail.com>",
     "Romano, Rodrigo <rodrigo@rodrigoromano.net>",
+    "Romão, Douglas <douglas.romao@trentim.com>",
     "Rozinov, Roman <roman.rozinov@sogeti.com>",
     "Schaeflein, Paul <paul@schaeflein.net>",
     "Schot, Albert-Jan <appie@digiwijs.nl>",
@@ -131,6 +134,7 @@
     "Schütze, Sebastian <sebastian.schuetze@razorspoint.com>",
     "Shah, Dipen <Dips365@hotmail.com>",
     "Siatka, Piotr <piotr@valointranet.com>",
+    "Sinha, Kislay <kislay_sinha@outlook.com>",
     "Sitaraman, Rajesh <rajesh.sitaraman@outlook.com>",
     "Sittler, Laurent <laurent.sittler@lsonline.fr>",
     "Skelly, Pete <peteskelly@gmail.com>",
@@ -148,19 +152,22 @@
   ],
   "dependencies": {
     "adal-node": "^0.2.1",
-    "applicationinsights": "^1.8.8",
-    "axios": "^0.21.0",
+    "adaptivecards-templating": "^1.4.0",
+    "applicationinsights": "^1.8.9",
+    "axios": "^0.21.1",
     "easy-table": "^1.1.1",
     "inquirer": "^7.3.3",
     "jmespath": "^0.15.0",
-    "markshell": "^1.3.7",
+    "json-to-ast": "^2.1.0",
+    "markshell": "^1.3.8",
     "minimist": "^1.2.5",
     "node-forge": "^0.10.0",
     "omelette": "^0.4.15",
+    "open": "^7.3.1",
     "semver": "^7.3.4",
     "strip-json-comments": "^3.1.1",
     "typescript": "^4.1.3",
-    "update-notifier": "^5.0.1",
+    "update-notifier": "^5.1.0",
     "uuid": "^8.3.2",
     "xmldom": "^0.4.0"
   },
@@ -168,18 +175,20 @@
     "@types/easy-table": "0.0.32",
     "@types/inquirer": "^7.3.0",
     "@types/jmespath": "^0.15.0",
+    "@types/json-to-ast": "^2.1.1",
     "@types/minimist": "^1.2.1",
     "@types/mocha": "^8.2.0",
-    "@types/node": "^14.14.13",
-    "@types/node-forge": "^0.9.5",
+    "@types/node": "^14.14.22",
+    "@types/node-forge": "^0.9.7",
     "@types/semver": "^7.3.4",
-    "@types/sinon": "^9.0.9",
+    "@types/sinon": "^9.0.10",
     "@types/update-notifier": "^5.0.0",
     "@types/uuid": "^8.3.0",
     "@types/xmldom": "^0.1.30",
-    "c8": "^7.3.5",
+    "c8": "^7.4.0",
+    "coveralls": "^3.1.0",
     "mocha": "^8.2.1",
     "rimraf": "^3.0.2",
-    "sinon": "^9.2.2"
+    "sinon": "^9.2.4"
   }
 }
