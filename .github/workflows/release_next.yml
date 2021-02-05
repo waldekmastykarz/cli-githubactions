@@ -9,7 +9,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        # os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [windows-latest]
         node: [14]
 
     steps:
@@ -47,18 +48,19 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
-        # node versions to run tests on
+        # os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [windows-latest]
+        # # node versions to run tests on
         nodeRun: [14]
-        # node versions on which code was built and should be tested
+        # # node versions on which code was built and should be tested
         nodeBuild: [14]
-        include:
-          - os: ubuntu-latest
-            nodeRun: 10
-            nodeBuild: 14
-          - os: ubuntu-latest
-            nodeRun: 12
-            nodeBuild: 14
+        # include:
+        #   - os: ubuntu-latest
+        #     nodeRun: 10
+        #     nodeBuild: 14
+        #   - os: ubuntu-latest
+        #     nodeRun: 12
+        #     nodeBuild: 14
 
     steps:
       - uses: actions/download-artifact@v2
@@ -90,13 +92,13 @@ jobs:
         if: matrix.nodeRun == 14
         run: npm test
         env:
-          NODE_OPTIONS: '--max_old_space_size=8192'
+          NODE_OPTIONS: '--max-old-space-size=8192'
       - name: Test without coverage
         # we want to run tests on older Node versions to ensure that code works
         if: matrix.nodeRun != 14
         run: npm run test:nocov
         env:
-          NODE_OPTIONS: '--max_old_space_size=8192'
+          NODE_OPTIONS: '--max-old-space-size=8192'
       - name: Compress output (non-Windows)
         if: matrix.nodeRun == 14 && matrix.os != 'windows-latest' && always()
         run: tar -cvf coverage.tar coverage
