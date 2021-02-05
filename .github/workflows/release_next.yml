@@ -31,8 +31,12 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
-      - name: Compress output
+      - name: Compress output (non-Windows)
+        if: matrix.os != 'windows-latest'
         run: tar -cvf build.tar --exclude node_modules ./
+      - name: Compress output (Windows)
+        if: matrix.os == 'windows-latest'
+        run: 7z a -ttar -xr!node_modules -r build.tar .
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
@@ -60,8 +64,12 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: build-${{ matrix.os }}-${{ matrix.nodeBuild }}
-      - name: Unpack build artifact
+      - name: Unpack build artifact (non-Windows)
+        if: matrix.os != 'windows-latest'
         run: tar -xvf build.tar && rm build.tar
+      - name: Unpack build artifact (Windows)
+        if: matrix.os == 'windows-latest'
+        run: 7z x build.tar && del build.tar
       - name: Use Node.js ${{ matrix.nodeRun }}
         uses: actions/setup-node@v1
         with:
@@ -89,9 +97,12 @@ jobs:
         run: npm run test:nocov
         env:
           NODE_OPTIONS: '--max_old_space_size=4096'
-      - name: Compress output
-        if: matrix.nodeRun == 14 && always()
+      - name: Compress output (non-Windows)
+        if: matrix.nodeRun == 14 && matrix.os != 'windows-latest' && always()
         run: tar -cvf coverage.tar coverage
+      - name: Compress output (Windows)
+        if: matrix.nodeRun == 14 && matrix.os == 'windows-latest' && always()
+        run: 7z a -ttar -r coverage.tar coverage
       - uses: actions/upload-artifact@v2
         if: matrix.nodeRun == 14 && always()
         with:
