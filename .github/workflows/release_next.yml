@@ -92,13 +92,13 @@ jobs:
         if: matrix.nodeRun == 14
         run: npm test
         env:
-          NODE_OPTIONS: '--max_old_space_size=8192 --optimize_for_size'
+          NODE_OPTIONS: '--max_old_space_size=8192'
       - name: Test without coverage
         # we want to run tests on older Node versions to ensure that code works
         if: matrix.nodeRun != 14
         run: npm run test:nocov
         env:
-          NODE_OPTIONS: '--max_old_space_size=8192 --optimize_for_size'
+          NODE_OPTIONS: '--max_old_space_size=8192'
       - name: Compress output (non-Windows)
         if: matrix.nodeRun == 14 && matrix.os != 'windows-latest' && always()
         run: tar -cvf coverage.tar coverage
