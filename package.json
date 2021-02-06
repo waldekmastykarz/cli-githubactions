@@ -21,8 +21,8 @@
     "build": "tsc -p . && node scripts/copy-files.js",
     "watch": "tsc -w -p .",
     "clean": "rimraf ./dist",
-    "test": "node --optimize-for-size ./node_modules/.bin/c8 mocha \"dist/**/*.spec.js\" --timeout 10000",
-    "test:nocov": "node --optimize-for-size ./node_modules/.bin/mocha \"dist/**/*.spec.js\" --timeout 10000"
+    "test": "c8 mocha \"dist/**/*.spec.js\" --timeout 10000",
+    "test:nocov": "mocha \"dist/**/*.spec.js\" --timeout 10000"
   },
   "keywords": [
     "office 365",
