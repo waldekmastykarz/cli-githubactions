@@ -63,6 +63,13 @@ jobs:
         #     nodeBuild: 14
 
     steps:
+      - name: configure pagefile
+        if: matrix.os == 'windows-latest'
+        uses: al-cheb/configure-pagefile-action@v1.2
+        with:
+          minimum-size: 16GB
+          maximum-size: 16GB
+          disk-root: "C:"
       - uses: actions/download-artifact@v2
         with:
           name: build-${{ matrix.os }}-${{ matrix.nodeBuild }}
